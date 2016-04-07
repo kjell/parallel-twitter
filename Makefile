@@ -2,6 +2,9 @@
 # tmp file as a workaround
 toNDJSON = csv2json > tmp; jq -c '.[]' tmp
 
+# DocNow/twarc, modified to download user favorites
+twarc = python vendor/twarc/twarc.py
+
 #	Download and save all tweets as JSON
 #
 #	I tried using `t`
@@ -18,6 +21,10 @@ timeline.json:
 	csv2json 10090_*/tweets.csv > tweets.json
 	jq -c '.[]' tweets.json > timeline.json
 	rm tweets.json
+
+# Download favorites
+favorites.json:
+	$(twarc) favorites $$user > favorites.json
 
 # Who I follow (`type=followings`)
 # and who follows me (`type=followers`)

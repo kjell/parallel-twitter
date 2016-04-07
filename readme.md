@@ -7,7 +7,7 @@ I cribbed the name.
 
 # TODO
 
-- [ ] save favorites
+- [ ] use `twarc` for timeline? can it get followed/following users?
 - [ ] save individual tweets, perhaps as `tweets/<year>/<month>/<day>.md`
 - [ ] de-dupe "friends", who are at both `{followings,followers}/<name>.json`
 - [ ] is there any way to extrapolate follow\*s back in time?

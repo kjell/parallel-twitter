@@ -1,3 +1,2 @@
 .envrc
-followings.json
-followers.json
+accounts/*

@@ -19,23 +19,23 @@ twarc = python vendor/twarc/twarc.py
 #	  https://twitter.com/settings/account
 timeline.json:
 	csv2json 10090_*/tweets.csv > tweets.json
-	jq -c '.[]' tweets.json > timeline.json
+	jq -c '.[]' tweets.json > accounts/$$user/timeline.json
 	rm tweets.json
 
 # Download favorites
 favorites.json:
-	$(twarc) favorites $$user > favorites.json
+	$(twarc) favorites $$user > accounts/$$user/favorites.json
 
 # Who I follow (`type=followings`)
 # and who follows me (`type=followers`)
 follows:
-	t $(type) | tee $(type).txt \
+	t $(type) | tee accounts/$$user/$(type).txt \
 		| xargs t users --csv \
 		| $(toNDJSON) \
-		> $(type).json;
+		> accounts/$$user/$(type).json;
 	rm tmp
 
 indexUsers:
-	cat $(type).json | while read -r user; do \
-	  jq '.' <<<$$user > "$(type)/$$(jq -r '."Screen name"' <<<$$user)"; \
+	cat accounts/$$user/$(type).json | while read -r userJson; do \
+	  jq '.' <<<$$userJson > "accounts/$$user/$(type)/$$(jq -r '."Screen name"' <<<$$userJson)"; \
 	done

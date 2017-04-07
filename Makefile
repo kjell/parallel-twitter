@@ -1,4 +1,6 @@
-toNDJSON = csv2json | jq -c '.[]'
+# csv2json tends to hang when piped to jq?
+# tmp file as a workaround
+toNDJSON = csv2json > tmp; jq -c '.[]' tmp
 
 #	Download and save all tweets as JSON
 #
@@ -17,10 +19,16 @@ timeline.json:
 	jq -c '.[]' tweets.json > timeline.json
 	rm tweets.json
 
-# Who I follow
-followings:
-	t $@ > $@.txt
+# Who I follow (`type=followings`)
+# and who follows me (`type=followers`)
+follows:
+	t $(type) | tee $(type).txt \
+		| xargs t users --csv \
+		| $(toNDJSON) \
+		> $(type).json;
+	rm tmp
 
-# Who follows me
-followers:
-	t $@ > $@.txt
+indexUsers:
+	cat $(type).json | while read -r user; do \
+	  jq '.' <<<$$user > "$(type)/$$(jq -r '."Screen name"' <<<$$user)"; \
+	done
